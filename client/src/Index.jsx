@@ -11,6 +11,7 @@ import Navbar from './components/Navbar';
 import Profile from './components/Profile';
 import GoogleMap from './components/GoogleMap';
 
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -201,6 +202,7 @@ class App extends React.Component {
             path="/map"
             component={() =>
               (<GoogleMap
+                savedTrips={this.state.savedTrips}
                 geoLocation={this.state.geoLocation}
                 crimeData={this.state.crimeData}
                 mapDestinations={this.state.mapDestinations}
