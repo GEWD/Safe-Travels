@@ -7,7 +7,13 @@ const propTypes = {
   location: PropTypes.string.isRequired,
   getSavedTrips: PropTypes.func.isRequired,
   setMapDestinations: PropTypes.func.isRequired,
+  // storePhoneNumber: PropTypes.func.isRequired
 };
+
+const handleOnClick = () => {
+  props.getSavedTrips();
+  props.setMapDestinations();
+}
 
 const Navbar = props => (
   <div>
@@ -19,14 +25,20 @@ const Navbar = props => (
         <div id="navbar" className="navbar-collapse collapse">
           <ul className="nav navbar-nav">
             { document.cookie.replace(/(?:(?:^|.*;\s*)isLoggedIn\s*\=\s*([^;]*).*$)|^.*$/, '$1') === 'true' ?
-              <li className="profile-nav" onClick={props.getSavedTrips}><Link to="/profile">Profile</Link></li> :
+              <li className="profile-nav" onClick={props.getSavedTrips}>
+                <Link to="/profile">Profile</Link>
+                <Link to="/plan-trip">Plan Trip</Link>
+              </li> :
               null
             }
             { props.location ?
               <li><Link to="/main">Recommendations</Link></li> :
               <li className="main-nav">Please Enter Destination</li>
             }
-            { props.location ? <li onClick={props.setMapDestinations}><Link to="/map">Map</Link></li> : null }
+            {
+              <li><Link to="/entry">Entry</Link></li>
+            }
+            { props.location ? <li onClick={handleOnClick}><Link to="/map">Map</Link></li> : null }
           </ul>
           <ul className="nav navbar-nav navbar-right">
             <li>
