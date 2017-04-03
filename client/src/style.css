@@ -1,4 +1,6 @@
-
+body {
+  color: #484848 !important;
+}
 
 .google-map {
   height: 100%;
@@ -15,6 +17,7 @@
 /*jumbotron in Entrance styling*/
 .jumbotron {
   background-image: url('./img/bridge.jpg');
+  background-size: cover;
   height: 100vh;
 }
 
@@ -36,6 +39,62 @@
 #search-input {
   height: 50px;
   margin-left: 10px;
+}
+
+/*Calendar*/
+.calendar-header {
+  display: flex;
+  flex-flow: row nowrap;
+  margin-bottom: 20px;
+  justify-content: space-between;
+}
+
+.cal-col-container {
+  border-radius: 4px;
+  border: 1px solid #dedede;
+}
+
+.calendar-col {
+  border-left: 1px #dedede solid;
+  height: 500px;
+  text-align: center;
+  margin-top: 10px;
+  height: 76vh;
+  overflow-y: scroll;
+}
+
+.calendar-col-first-entry {
+  border: none;
+}
+
+.calendar-col-date {
+  height: 40px;
+}
+
+.cal-cal-date {
+  max-height: 40px;
+  background-color: blue;
+}
+
+.cal-col-trip-entry {
+  max-height: 140px;
+}
+
+.save-calendar-btn {
+  margin-left: 20px;
+}
+
+/*Trip Entry Container*/
+.trip-entry-container {
+  max-height: 85vh;
+  overflow-y: scroll;
+  border: 1px solid #dedede !important;
+  border-radius: 4px;
+}
+
+/*Trip Entry*/
+.trip-entry-image {
+  width: 100%;
 }
 
 /*yelp restaurant styling*/
@@ -67,20 +126,6 @@
 .attraction-title {
   padding-left: 45px;
   margin-bottom: 20px;
-}
-
-/* styling for Navbar Buttons */
-.NavbarButton {
-  color: white;
-  padding: 15px 20px;
-  position: relative;
-  display: block;
-  color: #777;
-  text-decoration: none;
-  background-color: transparent;
-  box-sizing: border-box;
-  border: none;
-  line-height: 20px;
 }
 
 /*styling weather*/

@@ -283,6 +283,27 @@ app.post('/saveTrip', (req, res) => {
     .catch(err => console.error('yelpHour Error', err.message));
 });
 
+app.post('/saveTrip/calendar', (req, res) => {
+  const body = req.body;
+  const user = req.user;
+  const planCalendar = body.planCalendar;
+  if (user) {
+    User.findByIdAndUpdate(
+      user._id,
+      { $addToSet: { planCalendar: planCalendar } },
+      { safe: true, new: true, upsert: true },
+      (err, result) => {
+        if (err) {
+          console.error('/saveTrip/calendar ERROR: ', err);
+          res.sendStatus(400);
+        }
+        res.sendStatus(201);
+      });
+  } else {
+    res.sendStatus(404);
+  }
+});
+
 app.post('/removeSavedTrip', (req, res) => {
   const body = req.body;
   const user = req.user;
@@ -312,6 +333,21 @@ app.post('/sendItinerary', (req, res) => {
   zip.getEachNum({profileName: userNumber}, message);
   res.sendStatus(201);
 })
+
+app.get('/saveTrip/calendar', (req, res) => {
+  const user = req.user;
+  if (user) {
+    User.findOne({
+      _id: user._id,
+    }, (error, response) => {
+      if (response.planCalendar.length > 0) {
+        res.status(200).json(response.planCalendar);
+      }
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
 
 app.post('/zip', (req, res) => {
   let twiml = new twilio.TwimlResponse();
@@ -382,6 +418,5 @@ app.post('/api/url', (req, res) => {
 app.get('/*', (req, res) => {
   res.redirect('/');
 });
-
 
 module.exports = app;

@@ -2,14 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import RemoveSavedTripButton from './RemoveSavedTripButton';
 import { DragSource } from 'react-dnd';
 import { ItemTypes } from './Constants';
-import { Accordion, Panel, Row, Col } from 'react-bootstrap';
-
-const propTypes = {
-  trip: PropTypes.object.isRequired,
-};
+import { Row, Col } from 'react-bootstrap';
 
 let tripEntry;
-const tripSource = {
+const calColTripEntrySource = {
   beginDrag(props, monitor, Component) {
     const item = {id: props.id};
     tripEntry = Component.props.trip
@@ -24,11 +20,15 @@ const tripSource = {
     const item = monitor.getItem();
     const dropResult = monitor.getDropResult();
     const componentId = dropResult.componentId;
-    const tripEntryId = component.props.index;
     const type = dropResult.type;
-    if (type === 'calendar') {
+
+    if (type === 'tripContainer') {
+      props.removeCalEntry(props.entryId, props.tripIndex);
+      // props.savetripEntryContainer(tripEntry);
+      props.updateSavedTrip(tripEntry);
+    } else if (type === 'calendar') {
+      props.removeCalEntry(props.entryId, props.tripIndex);
       props.updateCalEntry(tripEntry, componentId);
-      props.removeSavedTripState(tripEntryId);
     }
   }
 }
@@ -41,42 +41,29 @@ function collect(connect, monitor) {
   };
 }
 
-class TripEntry extends Component {
+class CalColTripEntry extends Component {
   constructor(props) {
     super(props);
   }
 
   render() {
-    const { index, trip, removeSavedTrip, removeSavedTripState, connectDragSource, isDragging } = this.props;
+    const { trip, connectDragSource, isDragging } = this.props;
     return connectDragSource(
       <div>
-      <Row>
-        <Col xs={12} md={12}>
-          <div className="card card-block">
+        <Row>
+          <Col xs={12} md={12} className='cal-col-trip-entry'>
             <img className='trip-entry-image' src={trip.imageUrl} alt="restaurant" />
             <div>
-              <h5 className="card-title restaurant-li">
+              <p className=''>
                 <a href={trip.informationUrl} >{trip.name}</a>
-              </h5>
-              <p>
-                {trip.displayAddress}
               </p>
-              <a
-                onClick={() => {
-                  removeSavedTrip(trip);
-                  removeSavedTripState(index);
-                }}
-                className='remove-trip'
-              >Remove</a>
             </div>
-            <br />
-          </div>
-        </Col>
-      </Row>
+          </Col>
+        </Row>
       </div>
     );
   }
 }
 
-TripEntry.propTypes = propTypes;
-export default DragSource(ItemTypes.TRIPENTRY, tripSource, collect)(TripEntry);
+export default DragSource(ItemTypes.TRIPENTRY, calColTripEntrySource, collect)(CalColTripEntry);
+

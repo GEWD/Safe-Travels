@@ -14,7 +14,6 @@ import PlanTrip from './components/PlanTrip';
 import GoogleMap from './components/GoogleMap';
 import ItinerarySideBar from './components/ItinerarySideBar';
 
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -35,8 +34,21 @@ class App extends React.Component {
       phoneNumber: '',
       startDate: '',
       endDate: '',
-      sevenDayForecast: []
+      sevenDayForecast: [],
+      tripEntryContainer: [],
+      savedTripEntryContainer: [],
+      tripEntryContainer: [],
+      savedTripEntryContainer: [],
+      calCol: [
+        { date: '2017-04-02', tripEntry:[]},
+        { date: '2017-04-03', tripEntry:[]},
+        { date: '2017-04-04', tripEntry:[]},
+        { date: '2017-04-05', tripEntry:[]},
+        { date: '2017-04-06', tripEntry:[]},
+        { date: '2017-04-07', tripEntry:[]},
+      ],
     };
+
     this.startDate = null;
     this.endDate = null;
     this.mapDestinations = [];
@@ -59,11 +71,19 @@ class App extends React.Component {
     this.handleNumberChange = this.handleNumberChange.bind(this);
     this.handleNumberSubmit = this.handleNumberSubmit.bind(this);
     this.handleSendItinerary = this.handleSendItinerary.bind(this);
+    this.storeCalendar = this.storeCalendar.bind(this);
+    this.getCalendar = this.getCalendar.bind(this);
+    this.updateCalEntry = this.updateCalEntry.bind(this);
+    this.removeSavedTripState = this.removeSavedTripState.bind(this);
+    this.removeCalEntry = this.removeCalEntry.bind(this);
+    this.savetripEntryContainer = this.savetripEntryContainer.bind(this);
+    this.storeCalendar = this.storeCalendar.bind(this);
+    this.updateSavedTrip = this.updateSavedTrip.bind(this);
   }
 
   componentDidMount(){
-    this.queryShows();
-    this.queryHotels();
+    // this.queryShows();
+    // this.queryHotels();
   }
 
   login() {
@@ -80,32 +100,17 @@ class App extends React.Component {
     .catch( error => console.log(error));
   }
 
-  login() {
-    Axios.get('/login/facebook')
-    .then((res) => {
-    })
-    .catch( error => console.log(error));
+  savetripEntryContainer(trip) {
+    this.setState({
+      tripEntryContainer: this.state.tripEntryContainer.concat([trip])
+    });
+    console.log('======savetripEntryContainer RESULT tripEntryContainer', this.state.tripEntryContainer);
   }
 
-  logout() {
-    Axios.get('/logout')
-    .then((res) => {
-    })
-    .catch( error => console.log(error));
-  }
-
-  login() {
-    Axios.get('/login/facebook')
-    .then((res) => {
-    })
-    .catch( error => console.log(error));
-  }
-
-  logout() {
-    Axios.get('/logout')
-    .then((res) => {
-    })
-    .catch( error => console.log(error));
+  savetripEntryContainer(trip) {
+    this.setState({
+      savedTripEntryContainer: this.state.savedTripEntryContainer.concat([trip])
+    });
   }
 
   removeSavedTrip(trip) {
@@ -114,6 +119,14 @@ class App extends React.Component {
         console.log('Correctly removed trip');
       })
       .catch( error => console.log(error));
+  }
+
+  removeSavedTripState(id) {
+    const newSavedTrips = this.state.savedTrips;
+    newSavedTrips.splice(id,1);
+    this.setState({
+      savedTrips: newSavedTrips
+    });
   }
 
   getSavedTrips() {
@@ -279,6 +292,83 @@ class App extends React.Component {
       .catch(error => console.log(error));
   }
 
+  updateSavedTrip(tripEntry) {
+    let newSavedTrips = this.state.savedTrips;
+    newSavedTrips = newSavedTrips.concat([tripEntry]);
+    this.setState({
+      savedTrips: newSavedTrips
+    });
+  }
+
+  updateCalEntry(tripEntry, id) {
+    let newCalCol = this.state.calCol;
+    newCalCol[id].tripEntry = newCalCol[id].tripEntry.concat([tripEntry]);
+    this.setState({
+      calCol: newCalCol
+    });
+  }
+  removeCalEntry(entryId, tripIndex) {
+    let newCalCol = this.state.calCol;
+    newCalCol[entryId].tripEntry.splice(tripIndex, 1);
+    this.setState({
+      calCol: newCalCol
+    });
+  }
+
+  upDate(destination) {
+    return Axios.post('/saveTrip', {
+      destination,
+      startDate: this.props.startDate,
+      endDate: this.props.endDate,
+    })
+    .then(response => console.log(response))
+    .catch(error => console.log(error));
+  }
+
+  storeCalendar() {
+    Axios.post('/saveTrip/calendar', {
+      planCalendar: this.state.calCol
+      })
+    .then(response => console.log('storeCalendar Success '))
+    .catch(error => console.log('storeCalendar Error: ', error));
+  }
+
+ getCalendar() {
+    Axios.get('/saveTrip/calendar')
+    .then((res) => {
+      this.setState({ calCol: res.data });
+    });
+  }
+
+  removeCalEntry(entryId, tripIndex) {
+    console.log('=====entryId', entryId, '=====tripIndex', tripIndex);
+    let newCalCol = this.state.calCol;
+    console.log("newCalCol[entryId].tripEntry-======",newCalCol[entryId].tripEntry );
+    newCalCol[entryId].tripEntry.splice(tripIndex, 1);
+    this.setState({
+      calCol: newCalCol
+    });
+  }
+
+  upDate(destination) {
+    return Axios.post('/saveTrip', {
+      destination,
+      startDate: this.props.startDate,
+      endDate: this.props.endDate,
+    })
+    .then(response => console.log(response))
+    .catch(error => console.log(error));
+  }
+
+  storeCalendar() {
+    console.log('client --- storeCalendar()', this.state.calCol);
+    Axios.post('/saveTrip/calendar', {
+      planCalendar: this.state.calCol
+      })
+    .then(response => console.log('storeCalendar Success '))
+    .catch(error => console.log('storeCalendar Error: ', error));
+  }
+
   render() {
     return (
       <Router>
@@ -286,6 +376,7 @@ class App extends React.Component {
           <NavbarInstance
             location={this.state.location}
             getSavedTrips={this.getSavedTrips}
+            getCalendar={this.getCalendar}
             geoLocation={this.state.geoLocation}
             login={this.login}
             logout={this.logout}
@@ -340,8 +431,17 @@ class App extends React.Component {
             path="/plan-trip"
             component={() => (
               <PlanTrip
+                calCol={this.state.calCol}
                 savedTrips={this.state.savedTrips}
+                savedTripEntryContainer={this.state.savedTripEntryContainer}
+                savetripEntryContainer={this.savetripEntryContainer}
                 removeSavedTrip={this.removeSavedTrip}
+                removeSavedTripState={this.removeSavedTripState}
+                updateCalEntry={this.updateCalEntry}
+                removeCalEntry={this.removeCalEntry}
+                storeCalendar={this.storeCalendar}
+                getCalendar={this.getCalendar}
+                updateSavedTrip={this.updateSavedTrip}
               />)}
           />
           <Route
